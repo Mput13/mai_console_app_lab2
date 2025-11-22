@@ -8,7 +8,7 @@ def main():
             line = input(f"{shell.pwd}$ ")
             if line.strip().lower() == "exit":
                 break
-            tokens = shell.parse_command(line)
+            tokens = line.strip().split()
             shell.execute_command(tokens)
         except EOFError:
             break

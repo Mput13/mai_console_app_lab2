@@ -14,6 +14,10 @@ logger = logging.getLogger("shell")
 
 class Shell:
     def __init__(self):
+        """
+        Инициализируем класс, храним директорию, в которой работает наша командная строка и словарь с командами и их
+        методами.
+        """
         self.pwd = Path.cwd()
         self.commands = {
             "ls": self.ls,
@@ -24,10 +28,11 @@ class Shell:
             "rm": self.rm,
         }
 
-    def parse_command(self, line: str):
-        return line.strip().split()
-
     def execute_command(self, tokens: List[str]):
+        """
+        Выполнение команды. Получаем токены команды и аргументов, логируем их и выполняем ее, используя наш крутой
+        словарь, который отдает методы команд. Также ловим ошибки команд и выводим ошибку неизвестная команда, если надо.
+        """
         if not tokens:
             return
         line = " ".join(tokens)
@@ -46,6 +51,12 @@ class Shell:
             logger.info(f"ERROR: {error}")
 
     def ls(self, *args: str):
+        """
+        Обрабатываем аргументы, собираем полный путь до текущей или переданной директории. Далее обрабатываем возможные
+        ошибки (используем питонячьи ошибки, потому что они полностью соответствуют тому, что может произойти у нас и
+        поэтому зачем писать свои). Потом сортируем файлы/папки в директории и выводим их или собираем дополниетельные
+        данные из встроенной библиотеки stat.
+        """
         detailed = False
         path_str = None
         for arg in args:
@@ -72,6 +83,9 @@ class Shell:
                 print(item.name)
 
     def cd(self, *args: str):
+        """
+        Тут вроде все обычно, обрабатываем аргументы, ловим ошибки. Потом меняем директорию.
+        """
         if len(args) != 1:
             raise ValueError("cd takes exactly one argument")
         arg = args[0]
@@ -89,6 +103,7 @@ class Shell:
         self.pwd = new_path
 
     def cat(self, *args: str):
+        """Ловим ошибки, прочитываем содержимое файла и выводим его."""
         if len(args) != 1:
             raise ValueError("cat takes exactly one argument")
         path = self.pwd / Path(args[0])
@@ -155,7 +170,3 @@ class Shell:
             shutil.rmtree(path)
         else:
             os.remove(path)
-
-    # def grep(self, *args):
-    #     r =
-
